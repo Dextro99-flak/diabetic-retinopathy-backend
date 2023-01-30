@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: "Diabetic Retinopathy Assistive Diagnosis Backend API"
+  description: "The API end points will be called by a React.js front end"
+  version: "1.0.0"
+servers:
+  - url: "/backend"
+
+components:
+  parameters:
+    img_name:
+      name: "img_name"
+      description: "Name or Identifier of the person whose FUNDUS image is being used"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    auth_key:
+      name: "auth_key"
+      description: "This will act as an API key"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    patient_id:
+      name: "patient_id"
+      description: "This is a unique identifier for the patient"
+      in: path
+      required: True
+      schema:
+        type: "string"
+
+paths:
+  /analyze/{auth_key}/{img_name}/{patient_id}:
+    post:
+      operationId: "operations.send_to_cdn"
+      tags:
+        - "Vanilla"
+      summary: "Informs the backend about uploading of a new file on the CDN"
+      parameters:
+        - $ref: '#/components/parameters/auth_key'
+        - $ref: '#/components/parameters/img_name'
+        - $ref: '#/components/parameters/patient_id'
+      responses:
+        "200":
+          description: "File was found on CDN and will be analyzed"
+        "400":
+          description: "File was not found on CDN"
+
+  /analyze/{auth_key}/grade/{patient_id}/{img_name}:
+    get:
+      operationId: "operations.get_grade"
+      tags:
+        - "Analysis"
+      summary: "Returns grade of the FUNDUS image based on the model output"
+      parameters:
+        - $ref: '#/components/parameters/auth_key'
+        - $ref: '#/components/parameters/img_name'
+        - $ref: '#/components/parameters/patient_id'
+      responses:
+        "200":
+          description: "Successfully Graded the Image"
+
+  /analyze/{auth_key}/haemorrhage/{img_name}/{patient_id}:
+    get:
+      operationId: "operations.segment_HE"
+      tags:
+        - "Analysis"
+      summary: "Returns name of the image file that has the Segmentation map of Haemorrhage applied on it"
+      parameters:
+        - $ref: '#/components/parameters/auth_key'
+        - $ref: '#/components/parameters/img_name'
+        - $ref: '#/components/parameters/patient_id'
+      responses:
+        "200":
+          description: "Segmented Haemorrhages"
+
+  /analyze/{auth_key}/hardex/{img_name}/{patient_id}:
+    get:
+      operationId: "operations.segment_EX"
+      tags:
+        - "Analysis"
+      summary: "Returns name of the image file that has the Segmentation map of Hard Exudates applied on it"
+      parameters:
+        - $ref: '#/components/parameters/auth_key'
+        - $ref: '#/components/parameters/img_name'
+        - $ref: '#/components/parameters/patient_id'
+      responses:
+        "200":
+          description: "Segmented Hard Exudates"
+
+  /analyze/{auth_key}/softex/{img_name}/{patient_id}:
+    get:
+      operationId: "operations.segment_SE"
+      tags:
+        - "Analysis"
+      summary: "Returns name of the image file that has the Segmentation map of Soft Exudate applied on it"
+      parameters:
+        - $ref: '#/components/parameters/auth_key'
+        - $ref: '#/components/parameters/img_name'
+        - $ref: '#/components/parameters/patient_id'
+      responses:
+        "200":
+          description: "Segmented Soft Exudates"
+
+  /analyze/{auth_key}/microan/{img_name}:
+    get:
+      operationId: "operations.segment_MA"
+      tags:
+        - "Analysis"
+      summary: "Returns name of the image file that has the Segmentation map of Micro-Aneurysms applied on it"
+      parameters:
+        - $ref: '#/components/parameters/auth_key'
+        - $ref: '#/components/parameters/img_name'
+      responses:
+        "200":
+          description: "Segmented Micro-Aneurysms"
