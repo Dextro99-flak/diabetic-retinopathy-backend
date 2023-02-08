@@ -27,16 +27,22 @@ def upload_image(filepath):
 		return ans
 
 def download_image(filename,type):
-	ans=None
-	try:
-		with bucket.blob(filename) as blob:
-			blob.down_to_filename('result_'+type+'.jpg')
-		print('Download of image done')
-		ans=True
-	except Exception as e:
-		print(e)
-		print('Problem occured while downloading')
-		ans=False
-	finally:
-		return ans
+	# ans=None
+	# try:
+	# 	with bucket.blob(filename) as blob:
+	# 		blob.download_to_filename('result_'+type+'.jpg')
+	# 	print('Download of image done')
+	# 	ans=True
+	# except Exception as e:
+	# 	print(e)
+	# 	print('Problem occured while downloading')
+	# 	ans=False
+	# finally:
+	# 	return ans 
+	blob=bucket.blob(filename)
+	print('File to download',filename)
+	blob.download_to_filename('result_'+type+'.jpg')
+	print('Download of image done')
+	ans=True
+	return ans
 

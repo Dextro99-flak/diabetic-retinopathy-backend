@@ -1,6 +1,8 @@
 from flask import abort
 import config
 from imagekitio import ImageKit
+import prediction
+import handle_storage
 from imagekitio.models.ListAndSearchFileRequestOptions import ListAndSearchFileRequestOptions
 PRIVATE_KEY = 'private_Dog3OixXj6JG3UPRSjMt2DGniKc='
 PUBLIC_KEY = 'public_KKeDUuVKjvcDLawqxtJCmIYmXcI='
@@ -47,10 +49,10 @@ def send_to_cdn(auth_key,patient_id,img_name):
 def get_grade(auth_key,patient_id,img_name):
 	if verify(auth_key):
 		patient = config.Analysis.query.filter(config.Analysis.patient_id==patient_id, config.Analysis.image_filename==img_name).first()
-		print(patient)
+		print(patient,patient.grade)
 		if not patient:
 			return {'name':None,'patient_id':None, 'grade':None, 'result':'Wrong Details'},400
-		if patient.grade:
+		if patient.grade is not None:
 			print('SINCE GRADE WAS ALREADY PRESENT I RETURNED WHATEVER WAS GIVEN ALREADY')
 			return {'name':img_name,'patient_id':patient_id,'grade':patient.grade, 'result':'success'},200
 		else:
@@ -58,7 +60,9 @@ def get_grade(auth_key,patient_id,img_name):
 			# Code for extracting image from firebase
 			# Code for predicting the grade
 			# Code for extracting the results from model and assigning it to the patient.grade
-			patient.grade=10
+			ans=handle_storage.download_image(patient.image_filename,'fundus')
+			print('THE IMAGE WILL NOW BE SENT FOR PREDICTION')
+			patient.grade=prediction.get_grade('result_fundus.jpg')
 			config.db.session.commit()
 			return {'name':img_name, 'patient_id':patient_id, 'grade':patient.grade, 'result':'success'},200
 	else:
