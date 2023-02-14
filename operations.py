@@ -32,16 +32,17 @@ def verify(auth_key):
 	else:
 		return False
 
-def send_to_cdn(auth_key,patient_id,img_name):
+def send_to_cdn(auth_key,patient_id,image):
 	if verify(auth_key):
-		img=check_file(img_name)
-		if img is None:
-			return {'file':None},400
-		n1 = config.Analysis(patient_id=patient_id, image_filename=img_name)
-		config.db.session.add(n1)
-		print('Added :',n1)
-		config.db.session.commit()
-		return {'filename':img_name},200
+		# img=check_file(image)
+		# if img is None:
+		# 	return {'file':None},400
+		# n1 = config.Analysis(patient_id=patient_id, image_filename=image)
+		# config.db.session.add(n1)
+		# print('Added :',n1)
+		# config.db.session.commit()
+		# print(image)
+		return {'filename':'hello'},200
 	else:
 		abort(401,'wrong auth_key')
 		

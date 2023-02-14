@@ -36,16 +36,22 @@ paths:
       operationId: "operations.send_to_cdn"
       tags:
         - "Vanilla"
-      summary: "Informs the backend about uploading of a new file on the CDN"
+      summary: "Accepts Image data from front-end and uploads the image to CDN"
       parameters:
         - $ref: '#/components/parameters/auth_key'
-        - $ref: '#/components/parameters/img_name'
         - $ref: '#/components/parameters/patient_id'
+      requestBody:
+        required: True
+        content:
+          image/png:
+            schema:
+              type: "string"
+              format: "binary"
       responses:
         "200":
-          description: "File was found on CDN and will be analyzed"
+          description: "File was uploaded on CDN and will be analyzed"
         "400":
-          description: "File was not found on CDN"
+          description: "File was not uploaded on CDN"
 
   /analyze/{auth_key}/grade/{patient_id}/{img_name}:
     get:

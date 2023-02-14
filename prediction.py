@@ -7,7 +7,7 @@ def get_grade(img_filename):
     img=np.asarray(img)
     print('Now loading the model')
     model = keras.models.load_model('fundus_grading_model.h5')
-    print('Model has been loaded')
+    print('Model has been loaded') 
     ans = model.predict(np.array([img]))
     print('The answer is :',ans)
     return int(np.argmax(ans))
