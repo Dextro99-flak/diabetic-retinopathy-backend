@@ -4,6 +4,8 @@ from imagekitio import ImageKit
 import prediction
 import handle_storage
 from imagekitio.models.ListAndSearchFileRequestOptions import ListAndSearchFileRequestOptions
+from connexion import request
+from PIL import Image
 PRIVATE_KEY = 'private_Dog3OixXj6JG3UPRSjMt2DGniKc='
 PUBLIC_KEY = 'public_KKeDUuVKjvcDLawqxtJCmIYmXcI='
 URL = 'https://ik.imagekit.io/aqxxdd9fw'
@@ -32,7 +34,7 @@ def verify(auth_key):
 	else:
 		return False
 
-def send_to_cdn(auth_key,patient_id,image):
+def send_to_cdn(auth_key,patient_id):
 	if verify(auth_key):
 		# img=check_file(image)
 		# if img is None:
@@ -41,7 +43,12 @@ def send_to_cdn(auth_key,patient_id,image):
 		# config.db.session.add(n1)
 		# print('Added :',n1)
 		# config.db.session.commit()
-		# print(image)
+		# cmap={'0':(255,255,255), '1':(0,0,0)}
+		# data=[cmap[letter] for letter in request.data]
+		# img = Image.new('RGB', (8,len(data)//8), "white")
+		# img.putdata(data)
+		# img.show()
+		handle_storage.upload_image(request.data)
 		return {'filename':'hello'},200
 	else:
 		abort(401,'wrong auth_key')

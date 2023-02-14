@@ -31,7 +31,7 @@ components:
         type: "string"
 
 paths:
-  /analyze/{auth_key}/{img_name}/{patient_id}:
+  /analyze/{auth_key}/{patient_id}:
     post:
       operationId: "operations.send_to_cdn"
       tags:
