@@ -13,10 +13,10 @@ def upload_image(file_string,filename):
 	blob.upload_from_string(bb.read(),content_type='image/jpg')
 	return None
 
-def download_image(filename,type):
+def download_image(filename):
 	blob=bucket.blob(filename)
 	print('File to download',filename)
-	blob.download_to_filename('result_'+type+'.jpg')
+	blob.download_to_filename(filename)
 	print('Download of image done')
 	ans=True
 	return ans

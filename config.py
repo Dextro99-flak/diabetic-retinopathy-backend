@@ -22,7 +22,7 @@ class Patient(db.Model): # Add more details to this column as needed
 class Analysis(db.Model):
 	__tablename__='analysis'
 	patient_id = db.Column(db.String, db.ForeignKey(Patient.patient_id, ondelete='CASCADE', onupdate='CASCADE'),primary_key=True)
-	date_analysed = db.Column(db.DateTime, primary_key=True)
+	date_analysed = db.Column(db.String, primary_key=True)
 	image_filename = db.Column(db.String, nullable=False)
 	grade = db.Column(db.Integer, nullable=True)
 	he_filename = db.Column(db.String, nullable=True)
@@ -39,3 +39,5 @@ class User(db.Model):
 	def verify_password_direct(self, password): # Password Hash sent from front end is verified here
 		pwhash=bcrypt.hashpw(password,self.password)
 		return self.password==pwhash
+with app.app_context():
+	db.create_all()

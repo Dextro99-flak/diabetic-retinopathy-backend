@@ -61,7 +61,7 @@ paths:
         "400":
           description: "File was not uploaded on CDN"
 
-  /analyze/{auth_key}/grade/{patient_id}/{img_name}:
+  /analyze/{auth_key}/grade/{patient_id}/{date}:
     get:
       operationId: "operations.get_grade"
       tags:
@@ -75,7 +75,7 @@ paths:
         "200":
           description: "Successfully Graded the Image"
 
-  /analyze/{auth_key}/haemorrhage/{img_name}/{patient_id}:
+  /analyze/{auth_key}/haemorrhage/{patient_id}/{date}:
     get:
       operationId: "operations.segment_HE"
       tags:
@@ -89,7 +89,7 @@ paths:
         "200":
           description: "Segmented Haemorrhages"
 
-  /analyze/{auth_key}/hardex/{img_name}/{patient_id}:
+  /analyze/{auth_key}/hardex/{patient_id}/{date}:
     get:
       operationId: "operations.segment_EX"
       tags:
@@ -103,7 +103,7 @@ paths:
         "200":
           description: "Segmented Hard Exudates"
 
-  /analyze/{auth_key}/softex/{img_name}/{patient_id}:
+  /analyze/{auth_key}/softex/{patient_id}/{date}:
     get:
       operationId: "operations.segment_SE"
       tags:
@@ -117,7 +117,7 @@ paths:
         "200":
           description: "Segmented Soft Exudates"
 
-  /analyze/{auth_key}/microan/{img_name}:
+  /analyze/{auth_key}/microan/{patient_id}/{date}:
     get:
       operationId: "operations.segment_MA"
       tags:
