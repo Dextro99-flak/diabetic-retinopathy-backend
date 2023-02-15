@@ -29,9 +29,16 @@ components:
       required: True
       schema:
         type: "string"
+    date:
+      name: "date"
+      description: "This is the date on which the current FUNDUS image was captured"
+      in: path
+      required: True
+      schema:
+        type: "string"
 
 paths:
-  /analyze/{auth_key}/{patient_id}:
+  /analyze/{auth_key}/{patient_id}/{date}:
     post:
       operationId: "operations.send_to_cdn"
       tags:
@@ -40,6 +47,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/auth_key'
         - $ref: '#/components/parameters/patient_id'
+        - $ref: '#/components/parameters/date'
       requestBody:
         required: True
         content:
@@ -61,8 +69,8 @@ paths:
       summary: "Returns grade of the FUNDUS image based on the model output"
       parameters:
         - $ref: '#/components/parameters/auth_key'
-        - $ref: '#/components/parameters/img_name'
         - $ref: '#/components/parameters/patient_id'
+        - $ref: '#/components/parameters/date'
       responses:
         "200":
           description: "Successfully Graded the Image"
@@ -75,8 +83,8 @@ paths:
       summary: "Returns name of the image file that has the Segmentation map of Haemorrhage applied on it"
       parameters:
         - $ref: '#/components/parameters/auth_key'
-        - $ref: '#/components/parameters/img_name'
         - $ref: '#/components/parameters/patient_id'
+        - $ref: '#/components/parameters/date'
       responses:
         "200":
           description: "Segmented Haemorrhages"
@@ -89,8 +97,8 @@ paths:
       summary: "Returns name of the image file that has the Segmentation map of Hard Exudates applied on it"
       parameters:
         - $ref: '#/components/parameters/auth_key'
-        - $ref: '#/components/parameters/img_name'
         - $ref: '#/components/parameters/patient_id'
+        - $ref: '#/components/parameters/date'
       responses:
         "200":
           description: "Segmented Hard Exudates"
@@ -103,8 +111,8 @@ paths:
       summary: "Returns name of the image file that has the Segmentation map of Soft Exudate applied on it"
       parameters:
         - $ref: '#/components/parameters/auth_key'
-        - $ref: '#/components/parameters/img_name'
         - $ref: '#/components/parameters/patient_id'
+        - $ref: '#/components/parameters/date'
       responses:
         "200":
           description: "Segmented Soft Exudates"
@@ -117,7 +125,8 @@ paths:
       summary: "Returns name of the image file that has the Segmentation map of Micro-Aneurysms applied on it"
       parameters:
         - $ref: '#/components/parameters/auth_key'
-        - $ref: '#/components/parameters/img_name'
+        - $ref: '#/components/parameters/patient_id'
+        - $ref: '#/components/parameters/date'
       responses:
         "200":
           description: "Segmented Micro-Aneurysms"

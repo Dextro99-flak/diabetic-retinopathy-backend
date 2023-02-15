@@ -1,7 +1,7 @@
 import pathlib
 import connexion
 from flask_sqlalchemy import SQLAlchemy
-#import bcrypt
+import bcrypt
 
 basedir = pathlib.Path(__file__).parent.resolve()
 connex_app = connexion.App(__name__, specification_dir=basedir)
@@ -36,6 +36,6 @@ class User(db.Model):
 	username=db.Column(db.String, unique=True, nullable=False)
 	password=db.Column(db.String, nullable=False)
 
-	# def verify_password_direct(self, password): # Password Hash sent from front end is verified here
-	# 	pwhash=bcrypt.hashpw(password,self.password)
-	# 	return self.password==pwhash
+	def verify_password_direct(self, password): # Password Hash sent from front end is verified here
+		pwhash=bcrypt.hashpw(password,self.password)
+		return self.password==pwhash

@@ -34,7 +34,7 @@ def verify(auth_key):
 	else:
 		return False
 
-def send_to_cdn(auth_key,patient_id):
+def send_to_cdn(auth_key,patient_id,date):
 	if verify(auth_key):
 		# img=check_file(image)
 		# if img is None:
@@ -48,7 +48,8 @@ def send_to_cdn(auth_key,patient_id):
 		# img = Image.new('RGB', (8,len(data)//8), "white")
 		# img.putdata(data)
 		# img.show()
-		handle_storage.upload_image(request.data)
+		filename=str(patient_id)+'_'+str(date)+'.jpg'
+		handle_storage.upload_image(request.data,filename)
 		return {'filename':'hello'},200
 	else:
 		abort(401,'wrong auth_key')
@@ -98,7 +99,7 @@ def segment_HE(auth_key,patient_id,img_name):
 
 
 
-def segment_EX(auth_key,img_name):
+def segment_EX(auth_key,patient_id):
 	if verify(auth_key):
 		patient = config.Analysis.query.filter(config.Analysis.patient_id==patient_id, config.Analysis.image_filename==img_name).first()
 		if not patient:
@@ -111,7 +112,7 @@ def segment_EX(auth_key,img_name):
 			# Code for extracting the image from firebase
 			# Code for calling the module that will perform the segmentation
 			# Code for uploading image to firebase
-			# name of image will be : image_filename+hard_exudate_done
+			# name of image will be : patient_id+hard_exudate_done
 			patient.ex_filename = patient.patient_id+'hard_exudate_done.jpg'
 			config.db.session.commit()
 			return {'name':img_name,'patient_id':patient_id, 'ex_filename':patient.ex_filename, 'result':'success'},200
