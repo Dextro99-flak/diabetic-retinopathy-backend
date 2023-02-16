@@ -3,6 +3,7 @@ import config
 from imagekitio import ImageKit
 import prediction
 import handle_storage
+from flask import send_file
 from imagekitio.models.ListAndSearchFileRequestOptions import ListAndSearchFileRequestOptions
 from connexion import request
 from PIL import Image
@@ -95,20 +96,33 @@ def segment_EX(auth_key,patient_id,date):
 			return {'name':None,'patient_id':None, 'ex_filename':None, 'result':'Wrong Details'},400
 		if patient.ex_filename:
 			print('SINCE HARD EXUDATE WAS ALREADY SEGMENTED I RETURNED WHATEVER IMAGE WAS ALREADY THERE')
-			return {'name':img_name,'patient_id':patient_id, 'he_filename':patient.ex_filename, 'result':'success'},200
+			ans=handle_storage.download_image(patient.ex_filename)
+			# img=Image.open(patient.ex_filename)
+			# im1=np.asarray(img)
+			# buff=BytesIO()
+			# img.save(buff, format='JPEG')
+			# img=buff.getvalue()
+			return send_file(patient.ex_filename, mimetype='image/jpg')
+			#return {'patient_id':patient_id, 'ex_file':str(img), 'result':'success', 'image_shape':im1.shape},200
 		else:
 			print('SINCE HARD EXUDATE WAS NOT SEGMENTED I SEGMENTED IT AND RETURNED')
 			# Code for extracting the image from firebase
 			# Code for calling the module that will perform the segmentation
 			# Code for uploading image to firebase
 			# name of image will be : patient_id+hard_exudate_done
-			patient.ex_filename = patient.patient_id+'_hard_exudate_done.jpg'
+			patient.ex_filename = patient.patient_id+'_'+date+'_'+'_hard_exudate_done.jpg'
 			ans=handle_storage.download_image(patient.image_filename)
 			pred_img=prediction.get_full_segmented_hard_exudate(patient.image_filename)
 			img=Image.fromarray(np.uint8(pred_img))
-			img=BytesIO(img).read()
+			buff=BytesIO()
+			img.save(buff, format='JPEG')
+			img=buff.getvalue()
+			print('the type of image being handled is : ',type(img))
+			abss=handle_storage.upload_image(img,patient.ex_filename)
 			config.db.session.commit()
-			return {'name':img_name,'patient_id':patient_id, 'ex_file':img, 'result':'success'},200
+			ans=handle_storage.download_image(patient.ex_filename)
+			return send_file(patient.ex_filename, mimetype='image/jpg')
+			#return {'patient_id':patient_id, 'ex_file':str(img), 'result':'success', 'image_shape':pred_img.shape},200
 	else:
 		abort(404,'wrong auth_key')
 
@@ -117,18 +131,30 @@ def segment_SE(auth_key,patient_id,date):
 		patient = config.Analysis.query.filter(config.Analysis.patient_id==patient_id, config.Analysis.image_filename==img_name).first()
 		if not patient:
 			return {'name':None,'patient_id':None, 'se_filename':None, 'result':'Wrong Details'},400
-		if patient.he_filename:
+		if patient.se_filename:
 			print('SINCE SOFT EXUDATE WAS ALREADY SEGMENTED I RETURNED WHATEVER IMAGE WAS ALREADY THERE')
-			return {'name':img_name,'patient_id':patient_id, 'se_filename':patient.se_filename, 'result':'success'},200
+			ans=handle_storage.download_image(patient.ex_filename)
+			return send_file(patient.se_filename, mimetype='image/jpg')
+			#return {'name':img_name,'patient_id':patient_id, 'se_filename':patient.se_filename, 'result':'success'},200
 		else:
 			print('SINCE SOFT EXUDATE WAS NOT SEGMENTED I SEGMENTED IT AND RETURNED')
 			# Code for extracting the image from firebase
 			# Code for calling the module that will perform the segmentation
 			# Code for uploading image to firebase
 			# name of image will be : image_filename+soft_exudate_done
-			patient.se_filename = patient.patient_id+'soft_exudate_done.jpg'
+			patient.ex_filename = patient.patient_id+'_'+date+'_'+'_soft_exudate_done.jpg'
+			ans=handle_storage.download_image(patient.image_filename)
+			pred_img=prediction.get_full_segmented_hard_exudate(patient.image_filename)
+			img=Image.fromarray(np.uint8(pred_img))
+			buff=BytesIO()
+			img.save(buff, format='JPEG')
+			img=buff.getvalue()
+			print('the type of image being handled is : ',type(img))
+			abss=handle_storage.upload_image(img,patient.se_filename)
 			config.db.session.commit()
-			return {'name':img_name,'patient_id':patient_id, 'se_filename':patient.se_filename, 'result':'success'},200
+			ans=handle_storage.download_image(patient.se_filename)
+			return send_file(patient.se_filename)
+			#return {'name':img_name,'patient_id':patient_id, 'se_filename':patient.se_filename, 'result':'success'},200
 	else:
 		abort(404,'wrong auth_key')
 

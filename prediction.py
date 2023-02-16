@@ -18,8 +18,9 @@ def get_full_segmented_hard_exudate(img_filename):
 	img=Image.open(img_filename)
 	img=np.asarray(img)
 	img=cv2.resize(img,(512,512))
-	model=keras.model.load_model('UNET_Hard_Exudate.h5')
-	pred=model.predict(img)
+	print(img.shape)
+	model=keras.models.load_model('UNET_Hard_Exudate.h5')
+	pred=model.predict(np.array([img]))
 	img[:,:,1]=img[:,:,1]*np.reshape(pred[0],(512,512))
 	return img
 
