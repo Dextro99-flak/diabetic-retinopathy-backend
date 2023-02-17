@@ -1,0 +1,10 @@
+.forms-container{
+    display: flex;
+}
+.child-container{
+    flex: 1;
+}
+#patient-details{
+    width: 50%;
+    margin: auto;
+}

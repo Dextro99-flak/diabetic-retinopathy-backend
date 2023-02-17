@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='detector.css') }}"/>
+</head>
+<h1>hello, {{ current_user.username }}</h1>
+<!--<form method="post" >
+	<label for="img">Select image</label>
+	<input type="file" id="img" name="img" accept="image/*" onchange="DisplayImage(event)">
+	<input type="submit" value="upload">
+</form>-->
+<!--<div>
+    <form id="patient-form">
+        {{ form_patient.hidden_tag() }}
+        {{ form_patient.patient_name.label }} {{ form_patient.patient_name() }}
+        {{ form_patient.patient_id.label }}{{ form_patient.patient_id() }}
+    </form>
+</div>-->
+<div id="patient-details">
+    <label for="patient-name">Name:</label><input id="patient-name" type="text"/>   <label for="patient-id">ID:</label><input id="patient-id" type="text"/>
+</div>
+<div class="forms-container">
+    <div class="child-container">
+        <form id="left-form">
+            {{ form_image.hidden_tag() }}
+            <p>{{ form_image.photo(onchange="DisplayImage(event,'left')",accept="image/*") }} 
+            <p>{{ form_image.submit(hidden='True',id='left_submit') }}      <label id="grade-left" hidden style="font-weight: bold ;"></label> </p>
+        </form>
+        <div id="leftEye">
+            <img id="left" height="448">
+        </div>
+    </div>
+
+    <div class="child-container">
+        <form id="right-form">
+            {{ form_image.hidden_tag() }}
+            <p>{{ form_image.photo(onchange="DisplayImage(event,'right')",accept="image/*") }} 
+            <p>{{ form_image.submit(hidden='True',id='right_submit') }}      <label id="grade-right" hidden style="font-weight: bold ;"></label></p>
+        </form>
+        <div id="rightEye">
+            <img id="right" height="448">
+        </div>
+    </div>
+</div>
+
+
+
+<script  type="text/javascript">
+    function DisplayImage(event,side){
+    if(event.target.files.length > 0){
+        const submit = document.getElementById(side.concat('_submit'));
+        submit.removeAttribute("hidden");
+        var src = URL.createObjectURL(event.target.files[0]);
+        var preview = document.getElementById(side);
+        preview.src = src;
+        preview.style.display = "block";
+        
+    }   
+};
+
+
+const grade_left=document.getElementById("grade-left");
+const left_form = document.getElementById("left-form");
+left_form.addEventListener("submit",(event)=>{
+    event.preventDefault();
+    console.log('in function after submit');
+    const url = {{ url_for('detector')|tojson }};
+    
+    const formData_left= new FormData(left_form);
+    let csrf_token_left = document.getElementById("csrf_token").value;
+    formData_left.append("patient_name",document.getElementById('patient-name').value);
+    formData_left.append('patient_id',document.getElementById('patient-id').value);
+    formData_left.append("csrf_token", csrf_token_left);
+    
+    
+
+    fetch("{{ url_for('detector') }}", {
+                 method: "post",
+                 body: formData_left
+             })
+        .then(response => response.json())
+         .then(data => {
+                     console.log(data);
+                    grade_left.removeAttribute("hidden");
+                    grade_left.innerHTML = "Grade: ".concat(data['grade'].toString()) 
+        
+            });
+            console.log('this is after the web chain')
+        }
+        );
+
+const right_form = document.getElementById("right-form");
+const grade_right=document.getElementById("grade-right")
+right_form.addEventListener("submit",(event)=>{
+    event.preventDefault();
+    console.log('in function after submit');
+    const url = {{ url_for('detector')|tojson }};
+    const formData_right= new FormData(right_form);
+    let csrf_token_right = document.getElementById("csrf_token").value
+    formData_right.append("patient_name",document.getElementById('patient-name').value);
+    formData_right.append('patient_id',document.getElementById('patient-id').value);
+    formData_right.append("csrf_token", csrf_token_right)
+
+    fetch("{{ url_for('detector') }}", {
+                 method: "post",
+                 body: formData_right
+             })
+        .then(response => response.json())
+         .then(data => {
+                    console.log(data);
+                    grade_right.removeAttribute("hidden");
+                    grade_right.innerHTML = "Grade: ".concat(data['grade'].toString()) 
+            });
+        }
+        );
+
+
+         
+</script>
+
+    
+
+{% endblock content%}
+
+{# 
+<!--<form method="POST" action="" enctype="multipart/form-data" id="leftForm"  novalidate>
+{{ form.hidden_tag() }}
+<p>{{ form.photo(onchange="DisplayImage(event)") }} 
+    {{ form.patient_name.label }}  {{ form.patient_name() }} 
+    {{ form.patient_id.label }}  {{ form.patient_id() }}  </p>
+<p>{{ form.submit(hidden='True') }}</p>
+
+</form>
+-->
+#}
