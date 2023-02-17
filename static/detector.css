@@ -1,0 +1,6 @@
+.forms-container{
+    display: flex;
+}
+.child-container{
+    flex: 1;
+}

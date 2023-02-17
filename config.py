@@ -7,11 +7,12 @@ from flask_login import UserMixin,LoginManager
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_migrate import Migrate
 
+
 basedir = pathlib.Path(__file__).parent.resolve()
 connex_app = connexion.App(__name__, specification_dir=basedir)
 
 app = connex_app.app
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{basedir}/analysis.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{basedir/'analysis.db'}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'you will never guess ha ha'  #for user login
 
@@ -31,9 +32,17 @@ db = SQLAlchemy(app,metadata=metadata)
 migrate = Migrate(app,db)
 
 
+class Patient(db.Model): # Add more details to this column as needed
+	__tablename__='patient'
+	patient_id=db.Column(db.String, primary_key=True)
+	name=db.Column(db.String, nullable=False)
+	contact=db.Column(db.String, nullable=False)
+	address=db.Column(db.String, nullable=True)
+
 class Analysis(db.Model):
 	__tablename__='analysis'
-	patient_id = db.Column(db.String, primary_key=True)
+	patient_id = db.Column(db.String, db.ForeignKey(Patient.patient_id, ondelete='CASCADE', onupdate='CASCADE'),primary_key=True)
+	date_analysed = db.Column(db.String, primary_key=True)
 	image_filename = db.Column(db.String, nullable=False)
 	grade = db.Column(db.Integer, nullable=True)
 	he_filename = db.Column(db.String, nullable=True)
@@ -62,3 +71,4 @@ with app.app_context():
 @login.user_loader
 def load_user(id):
 	return User.query.get(int(id))
+
