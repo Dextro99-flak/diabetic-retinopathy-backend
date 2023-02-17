@@ -17,15 +17,14 @@
     </form>
 </div>-->
 <div id="patient-details">
-    <label for="patient-name">Name:</label><input id="patient-name" type="text"/>
-    <label for="patient-id">ID:</label><input id="patient-id" type="text"/>
+    <label for="patient-name">Name:</label><input id="patient-name" type="text"/>   <label for="patient-id">ID:</label><input id="patient-id" type="text"/>
 </div>
 <div class="forms-container">
     <div class="child-container">
         <form id="left-form">
             {{ form_image.hidden_tag() }}
             <p>{{ form_image.photo(onchange="DisplayImage(event,'left')",accept="image/*") }} 
-            <p>{{ form_image.submit(hidden='True',id='left_submit') }}</p>
+            <p>{{ form_image.submit(hidden='True',id='left_submit') }}      <label id="grade-left" hidden style="font-weight: bold ;"></label> </p>
         </form>
         <div id="leftEye">
             <img id="left" height="448">
@@ -36,7 +35,7 @@
         <form id="right-form">
             {{ form_image.hidden_tag() }}
             <p>{{ form_image.photo(onchange="DisplayImage(event,'right')",accept="image/*") }} 
-            <p>{{ form_image.submit(hidden='True',id='right_submit') }}</p>
+            <p>{{ form_image.submit(hidden='True',id='right_submit') }}      <label id="grade-right" hidden style="font-weight: bold ;"></label></p>
         </form>
         <div id="rightEye">
             <img id="right" height="448">
@@ -60,7 +59,7 @@
 };
 
 
-
+const grade_left=document.getElementById("grade-left");
 const left_form = document.getElementById("left-form");
 left_form.addEventListener("submit",(event)=>{
     event.preventDefault();
@@ -73,6 +72,8 @@ left_form.addEventListener("submit",(event)=>{
     formData_left.append('patient_id',document.getElementById('patient-id').value);
     formData_left.append("csrf_token", csrf_token_left);
     
+    
+
     fetch("{{ url_for('detector') }}", {
                  method: "post",
                  body: formData_left
@@ -80,12 +81,16 @@ left_form.addEventListener("submit",(event)=>{
         .then(response => response.json())
          .then(data => {
                      console.log(data);
+                    grade_left.removeAttribute("hidden");
+                    grade_left.innerHTML = "Grade: ".concat(data['grade'].toString()) 
         
             });
+            console.log('this is after the web chain')
         }
         );
 
 const right_form = document.getElementById("right-form");
+const grade_right=document.getElementById("grade-right")
 right_form.addEventListener("submit",(event)=>{
     event.preventDefault();
     console.log('in function after submit');
@@ -102,8 +107,9 @@ right_form.addEventListener("submit",(event)=>{
              })
         .then(response => response.json())
          .then(data => {
-                     console.log(data);
-        
+                    console.log(data);
+                    grade_right.removeAttribute("hidden");
+                    grade_right.innerHTML = "Grade: ".concat(data['grade'].toString()) 
             });
         }
         );

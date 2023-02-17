@@ -5,7 +5,6 @@ import prediction
 import handle_storage
 from flask import send_file
 from imagekitio.models.ListAndSearchFileRequestOptions import ListAndSearchFileRequestOptions
-from connexion import request
 from PIL import Image
 import numpy as np
 from io import BytesIO
@@ -37,12 +36,12 @@ def verify(auth_key):
 	else:
 		return False
 
-def send_to_cdn(auth_key,patient_id,date):
+def send_to_cdn(auth_key,patient_id,date,data):
 	if verify(auth_key):
 		filename=str(patient_id)+'_'+str(date)+'.jpg'
 		n1 = config.Analysis(patient_id=patient_id, image_filename=filename, date_analysed=date)
 		config.db.session.add(n1)
-		handle_storage.upload_image(request.data,filename)
+		handle_storage.upload_image(data,filename)
 		config.db.session.commit()
 		return {'filename':filename},200
 	else:

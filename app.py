@@ -55,15 +55,18 @@ def detector():
 			patient_id=form_image.patient_id.data
 			print("appended form validated")
 			print(patient_name,patient_id)
-			time=datetime.datetime.now().strftime("%Y_%m_%d-%H_%M")
-			(x,status)=send_to_cdn("ABCD",patient_id,time)
+			date=datetime.datetime.now().strftime("%Y_%m_%d-%H_%M")
+			(x,status)=send_to_cdn("ABCD",patient_id,date,image.stream.read())
 			print("sent to cdn successfully")
+			results=get_grade("ABCD",patient_id,date)
+			#segs=
+			return results 
 
 
-		return {
-			'name': 'burhan',
-			'surname': 'unwalla'
-			}
+			'''return {
+				'name': 'burhan',
+				'surname': 'unwalla'
+				}'''
 	else:
 		return render_template('detector.html',form_image=form_image,form_patient=form_patient)
 
